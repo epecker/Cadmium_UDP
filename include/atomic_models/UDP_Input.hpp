@@ -216,7 +216,7 @@ public:
 					return polling_rate;
 				}
 			default:
-				return TIME(TA_ZERO);
+				assert(false);
 		}
 	}
 
