@@ -33,10 +33,12 @@
 #include "enum_string_conversion.hpp"
 #include "Constants.hpp"
 
+#define RT_LINUX
 #ifdef RT_LINUX
 
 using namespace cadmium;
 using namespace std;
+using hclock = std::chrono::high_resolution_clock;
 
 // Input and output port definitions
 template<typename MSG>
@@ -121,6 +123,9 @@ public:
 		// std::signal(SIGINT, UDP_Input_Async::handle_signal);
 		// std::signal(SIGTERM, UDP_Input_Async::handle_signal);
 
+		auto current_time = chrono::system_clock::to_time_t(chrono::system_clock::now());
+		cout << "\nTime at start: " << current_time << endl;
+
 		//Start the user input thread.
 		std::thread(&UDP_Input_Async::receive_packet_thread, this).detach();
 	}
@@ -162,10 +167,12 @@ public:
 	// These are transitions occuring from internal inputs
 	// (required for the simulator)
 	void internal_transition() {
-		std::unique_lock<std::mutex> mutexLock(input_mutex, std::defer_lock);
-		//If the thread has finished receiving input, change state if there are messages.
-		if (mutexLock.try_lock()) {
-			state.has_messages = !messages.empty();
+		if (state.current_state == States::INPUT) {
+			std::unique_lock<std::mutex> mutexLock(input_mutex, std::defer_lock);
+			//If the thread has finished receiving input, change state if there are messages.
+			if (mutexLock.try_lock()) {
+				state.has_messages = !messages.empty();
+			}
 		}
 	}
 
@@ -173,12 +180,6 @@ public:
 	// These are transitions occuring from external inputs
 	// (required for the simulator)
 	void external_transition(TIME e, typename make_message_bags<input_ports>::type mbs) {
-		std::unique_lock<std::mutex> mutexLock(input_mutex, std::defer_lock);
-		//If the thread has finished receiving input, change state if there are messages.
-		if (mutexLock.try_lock()) {
-			state.has_messages = !messages.empty();
-		}
-
 		if (get_messages<typename UDP_Input_Async_defs<MSG>::i_quit>(mbs).size() >= 1) {
 			state.current_state = States::IDLE;
 		}
@@ -195,15 +196,19 @@ public:
 	typename make_message_bags<output_ports>::type output() const {
 		typename make_message_bags<output_ports>::type bags;
 		vector<MSG> message_out;
-		std::unique_lock<std::mutex> mutexLock(input_mutex, std::defer_lock);
+
 		if (state.current_state == States::INPUT) {
 			//If the lock is free and there are messages, send the messages.
-			if (!state.has_messages && mutexLock.try_lock()) {
+			std::unique_lock<std::mutex> mutexLock(input_mutex, std::defer_lock);
+			if (state.has_messages && mutexLock.try_lock()) {
 				for (auto msg : messages) {
 					message_out.push_back(msg);
 				}
 				messages.clear();
 				get_messages<typename UDP_Input_Async_defs<MSG>::o_message>(bags) = message_out;
+				auto current_time = chrono::system_clock::to_time_t(chrono::system_clock::now());
+				cout << "\nTime at output: " << current_time << endl;
+				cout << "Packet sent to Cadmium." << endl;
 			}
 		}
 		return bags;
@@ -212,11 +217,18 @@ public:
 	// Time advance
 	// Used to set the internal time of the current state
 	TIME time_advance() const {
-		if (!messages.empty() && state.current_state == States::INPUT) {
-			return TIME(TA_ZERO);
+		switch (state.current_state)
+		{
+		case States::INPUT:
+			if (state.has_messages) {
+				return TIME(TA_ZERO);
+			} else {
+				return std::numeric_limits<TIME>::infinity();
+			}
+		
+		default:
+			return std::numeric_limits<TIME>::infinity();
 		}
-
-		return std::numeric_limits<TIME>::infinity();
 	}
 
 	// Child thread for receiving UDP packets
@@ -257,6 +269,10 @@ public:
 		memcpy(&recv, &recv_buffer, bytes_transferred);
 		messages.insert(messages.begin(), recv);
 
+		auto current_time = chrono::system_clock::to_time_t(chrono::system_clock::now());
+		cout << "\nTime at receipt: " << current_time << endl;
+
+		cout << "Received packet." << endl;
 		//If an ack is required,
 		if (send_ack) {
 			//Construct the ack messages and associated data array.

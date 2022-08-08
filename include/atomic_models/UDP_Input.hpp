@@ -35,6 +35,7 @@
 #include "enum_string_conversion.hpp"
 #include "Constants.hpp"
 
+#define RT_LINUX
 #ifdef RT_LINUX
 
 using namespace cadmium;

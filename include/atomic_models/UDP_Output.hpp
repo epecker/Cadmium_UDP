@@ -100,6 +100,9 @@ public:
 	// These are transitions occuring from external inputs
 	// (required for the simulator)
     void external_transition(TIME e, typename make_message_bags<input_ports>::type mbs) {
+		auto current_time = chrono::system_clock::to_time_t(chrono::system_clock::now());
+		cout << "\nExternal input received at time: " << current_time << endl;
+
         bool have_message = get_messages<typename UDP_Output_defs<MSG>::i_message>(mbs).size() >= 1;
         if (state.current_state == States::IDLE) {
             if (have_message){
@@ -107,6 +110,7 @@ public:
                 message = get_messages<typename UDP_Output_defs<MSG>::i_message>(mbs)[0];
             }
         }
+		// If we're already sending and receive a new message, ignore it.
     }
 
 	// Confluence transition
@@ -124,6 +128,9 @@ public:
 		boost::system::error_code err;
         switch(state.current_state) {
             case States::SENDING:
+				auto current_time = chrono::system_clock::to_time_t(chrono::system_clock::now());
+				cout << "\nPacket sent at time: " << current_time << endl;
+
         		char data[sizeof(MSG)];
                 memcpy(data, &message, sizeof(data)); // Convert back to MSG: MSG recv = MSG(); memcpy(recv, data, sizeof(data));
 				socket.open(boost::asio::ip::udp::v4());
@@ -133,8 +140,6 @@ public:
 					std::cout << "[UDP Output] (ERROR) Error sending packet using UDP Output model: " << err.message() << std::endl;
 				}
 		        break;
-            default:
-                break;
         }
         return bags;
     }

@@ -6,26 +6,29 @@ State for model ir_quit is next time: 00:00:00:000
 00:00:00:000
 State for model udp_output is State: IDLE
 State for model ir_message is next time: 00:00:05:000
+State for model ir_message is next time: 00:00:05:000
 State for model ir_quit is next time: 00:00:20:000
 00:00:05:000
 State for model udp_output is State: SENDING
-State for model udp_output is State: SENDING
 State for model ir_quit is next time: 00:00:20:000
-State for model ir_message is next time: 00:01:10:000
+State for model ir_message is next time: 00:00:10:000
 00:00:05:020
 State for model udp_output is State: IDLE
 State for model ir_quit is next time: 00:00:20:000
-State for model ir_message is next time: 00:01:10:000
-00:00:20:000
-State for model udp_output is State: IDLE
-State for model ir_message is next time: 00:01:10:000
-State for model ir_quit is next time: inf
-00:01:15:000
+State for model ir_message is next time: 00:00:10:000
+00:00:15:000
+State for model ir_quit is next time: 00:00:20:000
 State for model udp_output is State: SENDING
 State for model ir_message is next time: inf
-State for model ir_quit is next time: inf
-00:01:15:020
+00:00:15:020
 State for model udp_output is State: IDLE
 State for model ir_message is next time: inf
+State for model ir_quit is next time: 00:00:20:000
+00:00:15:040
+State for model udp_output is State: IDLE
+State for model ir_message is next time: inf
+State for model ir_quit is next time: 00:00:20:000
+00:00:20:000
+State for model udp_output is State: IDLE
 State for model ir_message is next time: inf
 State for model ir_quit is next time: inf
