@@ -12,7 +12,7 @@ configure_file("${CMAKE_SOURCE_DIR}/include/config.hpp.in" "${CMAKE_SOURCE_DIR}/
 add_compile_definitions(CADMIUM_EXECUTE_CONCURRENT)
 
 #RT-Cadmium Definitions needed in order to use the real-time clock.
-add_compile_definitions(RT_LINUX)
+add_compile_definitions(RT_WIN)
 add_compile_definitions(RT_DEVS)
 #The value of this definition can be changed to anything other than -1.
 add_compile_definitions(MISSED_DEADLINE_TOLERANCE=-10)

@@ -2,7 +2,8 @@ include(FetchContent)
 
 FetchContent_Declare(
   rt-cadmium
-  URL https://codeload.github.com/KyleBjornson/cadmium/zip/refs/heads/master
+  # URL https://codeload.github.com/KyleBjornson/cadmium/zip/refs/heads/master
+  URL https://codeload.github.com/epecker/cadmium/zip/refs/heads/main
 )
 
 FetchContent_GetProperties(rt-cadmium)

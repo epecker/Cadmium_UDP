@@ -184,7 +184,7 @@ int main(int argc, char* argv[]) {
 		test_set_enumeration++;
 	} while (false);
 
-	fflush(NULL);
+	/*fflush(NULL);
 	string path_to_script = PROJECT_DIRECTORY + string("/test/scripts/simulation_cleanup.py");
 	string path_to_simulation_results = PROJECT_DIRECTORY + string("/test/simulation_results");
 	if (std::system("python3 --version") == 0) {
@@ -195,7 +195,7 @@ int main(int argc, char* argv[]) {
 		std::system(command.c_str());
 	} else {
 		cout << "\nPython is not installed!\n";
-	}
+	}*/
 
 	return 0;
 }

@@ -33,8 +33,8 @@
 #include "enum_string_conversion.hpp"
 #include "Constants.hpp"
 
-#define RT_LINUX
-#ifdef RT_LINUX
+#define RT_WIN
+#ifdef RT_WIN
 
 using namespace cadmium;
 using namespace std;
